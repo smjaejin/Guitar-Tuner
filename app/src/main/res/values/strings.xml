@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Guitar-Tuner</string>
+    <string name="request_audio">Microphone</string>
 </resources>

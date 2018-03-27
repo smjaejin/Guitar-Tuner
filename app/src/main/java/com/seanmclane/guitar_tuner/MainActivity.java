@@ -1,9 +1,15 @@
 package com.seanmclane.guitar_tuner;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.AudioEvent;
@@ -18,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
     public final static String[] NOTE_NAMES = new String[] { "C", "C#", "D", "Eb", "E", "F", "F#", "G", "G#", "A", "Bb", "B" };
     public final static String TAG = "MainActivity";
+    public final static int REQUEST_AUDIO_ACCSESS=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +32,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050,1024,0);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},REQUEST_AUDIO_ACCSESS);
+        }
+        else{
+            startRecording();
+        }
+
+
+    }
+
+    private void startRecording() {
+        AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050, 1024, 0);
 
         PitchDetectionHandler pdh = new PitchDetectionHandler() {
             @Override
@@ -45,8 +63,10 @@ public class MainActivity extends AppCompatActivity {
         };
         AudioProcessor p = new PitchProcessor(PitchProcessor.PitchEstimationAlgorithm.FFT_YIN, 22050, 1024, pdh);
         dispatcher.addAudioProcessor(p);
-        new Thread(dispatcher,"Audio Dispatcher").start();
+        new Thread(dispatcher, "Audio Dispatcher").start();
+    }
 
+    private void requestAudio() {
     }
 
     private int rangeOfNote(double givenHz) {
@@ -81,5 +101,17 @@ public class MainActivity extends AppCompatActivity {
         return  NOTE_NAMES[PitchConverter.hertzToMidiKey(pitchInHz)%12];
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
+            startRecording();
+
+        } else {
+
+            Toast.makeText(this, "Access to the microphone is required for this app to run properly", Toast.LENGTH_SHORT).show();
+        }
+        return;
+    }
 }
