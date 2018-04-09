@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         //Log.d(TAG, "run: "+PitchConverter.hertzToMidiKey(pitchInHz));
                         if (pitchInHz > 0.0) {
-                            //Log.d(TAG, "run: "+pitchInHz);
+                            Log.d(TAG, "run: "+pitchInHz);
                             animateIndicator(pitchInHz, rangeOfNote(pitchInHz));
                         }
                     }
@@ -49,28 +49,36 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private int rangeOfNote(double givenHz) {
-        int rangeScores[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21};
+    /**
+     * @param givenHz the Hz value from a mic input
+     *
+     * @return a double ranging from -10.0 to 10.0
+     */
+
+    private double rangeOfNote(double givenHz) {
+        //This rounds the Hz value to its closest midi key
         int midiCurrent = PitchConverter.hertzToMidiKey(givenHz);
         int midiBelow = midiCurrent - 1;
         int midiAbove = midiCurrent + 1;
-        int index;
-        double rangeOfBelow = PitchConverter.midiKeyToHertz(midiCurrent) - PitchConverter.midiKeyToHertz(midiBelow);
-        double rangeOfAbove = PitchConverter.midiKeyToHertz(midiAbove) - PitchConverter.midiKeyToHertz(midiCurrent);
+        double index;
+        //finds difference of Hz value between the midi keys above and below the current one
+        double rangeOfBelow = (PitchConverter.midiKeyToHertz(midiCurrent) - PitchConverter.midiKeyToHertz(midiBelow))/2;
+        double rangeOfAbove = (PitchConverter.midiKeyToHertz(midiAbove) - PitchConverter.midiKeyToHertz(midiCurrent))/2;
+        //finds the difference between the rounded Hz value and the actual Hz value
         double difference = PitchConverter.midiKeyToHertz(midiCurrent)-givenHz;
         if (difference>=0) {
-            double preIndex = difference/rangeOfAbove;
-            index = (int) Math.round(10+10*preIndex);
+            index = 10*(difference/rangeOfAbove);
         }
         else {
-            double preIndex = difference/rangeOfBelow;
-            index = (int) Math.round(10 - preIndex*10);
+            index = 10*(difference/rangeOfBelow);
         }
-        Log.d(TAG, "rangeOfNote: "+rangeScores[index]);
-        return rangeScores[index];
+        //Log.d(TAG, "rangeOfNote: "+index);
+        //if (index<-10 || index>10)
+            //Log.d(TAG, "OUTSIDE OF RANGE Hz Value: "+givenHz+" NOTE VALUE: "+NOTE_NAMES[midiCurrent%12]);
+        return index;
     }
 
-    private void animateIndicator(double pitchInHz, int range){
+    private void animateIndicator(double pitchInHz, double range){
         TextView text = (TextView) findViewById(R.id.textViewNote);
         text.setText("" + getNoteStringFromHzValue(pitchInHz));
     }
