@@ -8,6 +8,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     public final static String[] NOTE_NAMES = new String[] { "C", "C#", "D", "Eb", "E", "F", "F#", "G", "G#", "A", "Bb", "B" };
     public final static String TAG = "MainActivity";
     public final static int REQUEST_AUDIO_ACCSESS=0;
+    private SeekBar seekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +40,6 @@ public class MainActivity extends AppCompatActivity {
         else{
             startRecording();
         }
-
-
     }
 
     private void startRecording() {
@@ -101,6 +101,18 @@ public class MainActivity extends AppCompatActivity {
     private void animateIndicator(double pitchInHz, double range){
         TextView text = (TextView) findViewById(R.id.textViewNote);
         text.setText("" + getNoteStringFromHzValue(pitchInHz));
+        seekBar = (SeekBar) findViewById(R.id.seekBar);
+        seekBar.setMax(2000);
+        //seekBar.setProgress( (11*100) , true);
+        if((rangeOfNote(pitchInHz)+10)<0){
+            seekBar.setProgress(0);
+        }
+        else{
+        seekBar.setProgress( (int) ((rangeOfNote(pitchInHz)+10)*100), true  );
+        }
+        seekBar.setProgress(0);
+
+
     }
 
     private String getNoteStringFromHzValue(Double pitchInHz) {
