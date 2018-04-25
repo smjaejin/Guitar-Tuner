@@ -8,6 +8,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},REQUEST_AUDIO_ACCSESS);
         }
@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
             startRecording();
         }
     }
-
     private void startRecording() {
         AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050, 1024, 0);
 
@@ -104,14 +103,13 @@ public class MainActivity extends AppCompatActivity {
         seekBar = (SeekBar) findViewById(R.id.seekBar);
         seekBar.setMax(2000);
         //seekBar.setProgress( (11*100) , true);
-        if((rangeOfNote(pitchInHz)+10)<0){
+        if(((rangeOfNote(pitchInHz)*(0-1)+10)<0)){
             seekBar.setProgress(0);
         }
         else{
-        seekBar.setProgress( (int) ((rangeOfNote(pitchInHz)+10)*100), true  );
+        seekBar.setProgress( (int) (((rangeOfNote(pitchInHz)*(0-1)+10)*100)), true  );
         }
         seekBar.setProgress(0);
-
 
     }
 
