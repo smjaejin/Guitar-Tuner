@@ -2,12 +2,14 @@ package com.seanmclane.guitar_tuner;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.media.AudioFormat;
+import android.media.AudioManager;
+import android.media.AudioTrack;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
     public final static String TAG = "MainActivity";
     public final static int REQUEST_AUDIO_ACCSESS=0;
     private SeekBar seekBar;
+
+    double min=0, max = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         //Log.d(TAG, "run: "+PitchConverter.hertzToMidiKey(pitchInHz));
                         if (pitchInHz > 0.0) {
-                            Log.d(TAG, "run: "+pitchInHz);
+                            //Log.d(TAG, "run: "+pitchInHz);
                             animateIndicator(pitchInHz, rangeOfNote(pitchInHz));
                         }
                     }
@@ -66,8 +70,6 @@ public class MainActivity extends AppCompatActivity {
         new Thread(dispatcher, "Audio Dispatcher").start();
     }
 
-    private void requestAudio() {
-    }
 
     /**
      * @param givenHz the Hz value from a mic input
@@ -92,10 +94,33 @@ public class MainActivity extends AppCompatActivity {
         else {
             index = 10*(difference/rangeOfBelow);
         }
-        //Log.d(TAG, "rangeOfNote: "+index);
-        //if (index<-10 || index>10)
-            //Log.d(TAG, "OUTSIDE OF RANGE Hz Value: "+givenHz+" NOTE VALUE: "+NOTE_NAMES[midiCurrent%12]);
+
         return index;
+    }
+
+    private void playSound(double frequency) {
+        // AudioTrack definition
+        int mBufferSize = AudioTrack.getMinBufferSize(44100,
+                AudioFormat.CHANNEL_OUT_MONO,
+                AudioFormat.ENCODING_PCM_8BIT);
+
+        AudioTrack mAudioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, 44100,
+                AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT,
+                mBufferSize, AudioTrack.MODE_STREAM);
+
+        // Sine wave
+        double[] mSound = new double[4410];
+        short[] mBuffer = new short[44100];
+        for (int i = 0; i < mSound.length; i++) {
+            mSound[i] = Math.sin((2.0*Math.PI * i/(44100/frequency)));
+            mBuffer[i] = (short) (mSound[i]*Short.MAX_VALUE);
+        }
+
+        mAudioTrack.play();
+
+        mAudioTrack.write(mBuffer, 0, mSound.length);
+        mAudioTrack.stop();
+        mAudioTrack.release();
     }
 
     private void animateIndicator(double pitchInHz, double range){
@@ -108,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
             seekBar.setProgress(0);
         }
         else{
-        seekBar.setProgress( (int) ((rangeOfNote(pitchInHz)+10)*100), true  );
+        seekBar.setProgress((int) ((rangeOfNote(pitchInHz)+10)*100),true);
         }
         seekBar.setProgress(0);
 
@@ -134,4 +159,5 @@ public class MainActivity extends AppCompatActivity {
         }
         return;
     }
+
 }
