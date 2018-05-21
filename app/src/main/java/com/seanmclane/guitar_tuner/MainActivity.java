@@ -2,9 +2,6 @@ package com.seanmclane.guitar_tuner;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.media.AudioFormat;
-import android.media.AudioManager;
-import android.media.AudioTrack;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -29,8 +26,6 @@ public class MainActivity extends AppCompatActivity {
     public final static String TAG = "MainActivity";
     public final static int REQUEST_AUDIO_ACCSESS=0;
     private SeekBar seekBar;
-
-    double min=0, max = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
