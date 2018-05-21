@@ -5,7 +5,7 @@
     android:id="@+id/main_screen"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/colorPrimaryDark"
     android:visibility="visible"
     tools:context="com.seanmclane.guitar_tuner.MainActivity">
 
