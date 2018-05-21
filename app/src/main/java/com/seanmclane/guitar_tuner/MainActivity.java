@@ -3,6 +3,9 @@ package com.seanmclane.guitar_tuner;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.AudioFormat;
+import android.media.AudioManager;
+import android.media.AudioTrack;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -111,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         //Log.d(TAG, "run: "+PitchConverter.hertzToMidiKey(pitchInHz));
                         if (pitchInHz > 0.0) {
-                            Log.d(TAG, "run: "+pitchInHz);
+                            //Log.d(TAG, "run: "+pitchInHz);
                             animateIndicator(pitchInHz, rangeOfNote(pitchInHz));
                         }
                     }
@@ -155,19 +158,45 @@ public class MainActivity extends AppCompatActivity {
         return index;
     }
 
+    private void playSound(double frequency) {
+        // AudioTrack definition
+        int mBufferSize = AudioTrack.getMinBufferSize(44100,
+                AudioFormat.CHANNEL_OUT_MONO,
+                AudioFormat.ENCODING_PCM_8BIT);
+
+        AudioTrack mAudioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, 44100,
+                AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT,
+                mBufferSize, AudioTrack.MODE_STREAM);
+
+        // Sine wave
+        double[] mSound = new double[4410];
+        short[] mBuffer = new short[44100];
+        for (int i = 0; i < mSound.length; i++) {
+            mSound[i] = Math.sin((2.0*Math.PI * i/(44100/frequency)));
+            mBuffer[i] = (short) (mSound[i]*Short.MAX_VALUE);
+        }
+
+        mAudioTrack.play();
+
+        mAudioTrack.write(mBuffer, 0, mSound.length);
+        mAudioTrack.stop();
+        mAudioTrack.release();
+    }
+
     private void animateIndicator(double pitchInHz, double range){
         TextView text = (TextView) findViewById(R.id.textViewNote);
         text.setText("" + getNoteStringFromHzValue(pitchInHz));
         seekBar = (SeekBar) findViewById(R.id.seekBar);
         seekBar.setMax(2000);
         //seekBar.setProgress( (11*100) , true);
-        if(((rangeOfNote(pitchInHz)*(0-1)+10)<0)){
+        if((rangeOfNote(pitchInHz)+10)<0){
             seekBar.setProgress(0);
         }
         else{
-        seekBar.setProgress( (int) (((rangeOfNote(pitchInHz)*(0-1)+10)*100)), true  );
+        seekBar.setProgress((int) ((rangeOfNote(pitchInHz)+10)*100),true);
         }
         seekBar.setProgress(0);
+
 
     }
 
@@ -190,4 +219,5 @@ public class MainActivity extends AppCompatActivity {
         }
         return;
     }
+
 }
