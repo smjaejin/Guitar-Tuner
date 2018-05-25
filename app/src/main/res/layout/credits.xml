@@ -8,13 +8,14 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="255dp"
-        android:layout_height="202dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Creators: Harrison Chun, Joshua Fuller, Sean McLane, David Szilagyi\n\nSpecial Thanks to Graphic Design\n\nAll credit goes to Sean Being an Asshole"
+        android:text="Creators:\nHarrison Chun, Joshua Fuller, Sean McLane, David Szilagyi\n\n\nUses TarsosDSP Library for Audio Processing"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"

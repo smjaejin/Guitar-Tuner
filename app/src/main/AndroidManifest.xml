@@ -25,5 +25,8 @@
         <activity android:name=".SettingsActivity">
 
         </activity>
+        <activity android:name=".CreditsActivity">
+
+        </activity>
     </application>
 </manifest>
