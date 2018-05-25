@@ -1,6 +1,7 @@
 package com.seanmclane.guitar_tuner;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -40,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
         else{
             startRecording();
         }
+        Intent i = new Intent(MainActivity.this, TuningActivity.class);
+        startActivity(i);
+
     }
 
     private void startRecording() {
