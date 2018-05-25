@@ -82,12 +82,12 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.settings:
                 openSettings();
+                }
+        switch (item.getItemId()) {
             case R.id.credits:
                 openCredits();
         }
-
-
-            return true;
+        return true;
 
     }
 
