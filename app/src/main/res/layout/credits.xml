@@ -14,7 +14,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Creators:\nHarrison Chun, Joshua Fuller, Sean McLane, David Szilagyi\n\n\nUses TarsosDSP Library for Audio Processing"
+        android:text="Creators:\nHarrison Chun, Joshua Fuller, Sean McLane, David Szilagyi\n\n \nUses TarsosDSP Library for Audio Processing"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
