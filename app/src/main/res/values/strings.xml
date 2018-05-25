@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">Guitar-Tuner</string>
     <string name="request_audio">Microphone</string>
+    <string name="sort_by_name">Sort by Name</string>
+    <string name="sort_by_accessed">Sort by accessed</string>
+    <string name="sort_by_created">Sort by created</string>
+    <string name ="preference_file_key">SharedPreferenceFileKey</string>
+    <string name = "background_style">backgroundStyle</string>
+
 </resources>

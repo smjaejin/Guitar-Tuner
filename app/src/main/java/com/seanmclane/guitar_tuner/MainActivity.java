@@ -3,16 +3,27 @@ package com.seanmclane.guitar_tuner;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.AudioFormat;
+import android.media.AudioManager;
+import android.media.AudioTrack;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.widget.Toolbar;
+import android.content.Context;
+import android.content.SharedPreferences;
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.AudioProcessor;
@@ -28,12 +39,32 @@ public class MainActivity extends AppCompatActivity {
     public final static String TAG = "MainActivity";
     public final static int REQUEST_AUDIO_ACCSESS=0;
     private SeekBar seekBar;
+    private boolean screen;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Context context = this;
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                context.getString(R.string.preference_file_key),Context.MODE_PRIVATE);
+        boolean currentScreen =  sharedPref.getBoolean(getString(R.string.background_style), true);
+        if(currentScreen!=screen){
+            recreate();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        Context context = this;
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                context.getString(R.string.preference_file_key),Context.MODE_PRIVATE);
 
+        screen = sharedPref.getBoolean(getString(R.string.background_style), true);
+//use maylis whetsels shared preferences tutorial
+       if(!screen)
+       {setContentView(R.layout.activity_main);}
+       else setContentView(R.layout.activity_main_dark);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},REQUEST_AUDIO_ACCSESS);
@@ -45,6 +76,37 @@ public class MainActivity extends AppCompatActivity {
         startActivity(i);
 
     }
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater=getMenuInflater();
+        inflater.inflate(R.menu.options_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.settings:
+                openSettings();
+            case R.id.credits:
+                openCredits();
+        }
+
+
+            return true;
+
+    }
+
+
+    private void openCredits() {
+    Intent j = new Intent(MainActivity.this,CreditsActivity.class);
+    startActivity(j);
+    }
+
+    private void openSettings() {
+        Intent i = new Intent(MainActivity.this, SettingsActivity.class);
+        startActivity(i);
+    }
+
 
     private void startRecording() {
         AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050, 1024, 0);
@@ -58,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         //Log.d(TAG, "run: "+PitchConverter.hertzToMidiKey(pitchInHz));
                         if (pitchInHz > 0.0) {
-                            Log.d(TAG, "run: "+pitchInHz);
+                            //Log.d(TAG, "run: "+pitchInHz);
                             animateIndicator(pitchInHz, rangeOfNote(pitchInHz));
                         }
                     }
@@ -102,6 +164,31 @@ public class MainActivity extends AppCompatActivity {
         return index;
     }
 
+    private void playSound(double frequency) {
+        // AudioTrack definition
+        int mBufferSize = AudioTrack.getMinBufferSize(44100,
+                AudioFormat.CHANNEL_OUT_MONO,
+                AudioFormat.ENCODING_PCM_8BIT);
+
+        AudioTrack mAudioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, 44100,
+                AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT,
+                mBufferSize, AudioTrack.MODE_STREAM);
+
+        // Sine wave
+        double[] mSound = new double[4410];
+        short[] mBuffer = new short[44100];
+        for (int i = 0; i < mSound.length; i++) {
+            mSound[i] = Math.sin((2.0*Math.PI * i/(44100/frequency)));
+            mBuffer[i] = (short) (mSound[i]*Short.MAX_VALUE);
+        }
+
+        mAudioTrack.play();
+
+        mAudioTrack.write(mBuffer, 0, mSound.length);
+        mAudioTrack.stop();
+        mAudioTrack.release();
+    }
+
     private void animateIndicator(double pitchInHz, double range){
         TextView text = (TextView) findViewById(R.id.textViewNote);
         text.setText("" + getNoteStringFromHzValue(pitchInHz));
@@ -112,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
             seekBar.setProgress(0);
         }
         else{
-        seekBar.setProgress( (int) ((rangeOfNote(pitchInHz)+10)*100), true  );
+        seekBar.setProgress((int) ((rangeOfNote(pitchInHz)+10)*100),true);
         }
         seekBar.setProgress(0);
 
@@ -138,4 +225,5 @@ public class MainActivity extends AppCompatActivity {
         }
         return;
     }
+
 }
