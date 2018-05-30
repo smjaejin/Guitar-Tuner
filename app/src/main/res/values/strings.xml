@@ -6,5 +6,6 @@
     <string name="sort_by_created">Sort by created</string>
     <string name ="preference_file_key">SharedPreferenceFileKey</string>
     <string name = "background_style">backgroundStyle</string>
+    <string name="tuning_preference">tuningPreference</string>
 
 </resources>
