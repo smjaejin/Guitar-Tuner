@@ -24,12 +24,14 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.MyView
     }
 
     public static final int BACKGROUND_COLOR = 0;
+    public static final int TUNING=1;
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.settings_item, parent, false);
         return new MyViewHolder(itemView);
     }
+
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
@@ -39,10 +41,12 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.MyView
 
 
 
+
         // holder.switchDefault.setChecked(setting.getSwitch());
         holder.switchDefault.setChecked(setting.getSwitch());
 SharedPreferences sharedPref =context.getSharedPreferences("SharedPreferenceFileKey", Context.MODE_PRIVATE);
 boolean currentValue = sharedPref.getBoolean("backgroundStyle", true);
+boolean currentValue1 = sharedPref.getBoolean("tuning_preference", false);
 holder.switchDefault.setChecked(currentValue);
         holder.switchDefault.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -70,7 +74,28 @@ holder.switchDefault.setChecked(currentValue);
                                 Log.d(TAG, "onCheckedChanged: false");
                             }
                         break;
+                    case TUNING:
+                        if(isChecked)
+                        {SharedPreferences sharedPref = context.getSharedPreferences(
+                                context.getString(R.string.preference_file_key),Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPref.edit();
 
+                            editor.putBoolean("tuning_preference", true);
+                            editor.commit();
+
+                            Log.d(TAG, "onCheckedChanged: true");
+
+                        }
+                        else {
+                            SharedPreferences sharedPref = context.getSharedPreferences(
+                                    context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPref.edit();
+
+                            editor.putBoolean("tuning_preference", false);
+                            editor.commit();
+                            Log.d(TAG, "onCheckedChanged: false");
+                        }
+                        break;
 
                 }
             }
@@ -88,10 +113,12 @@ holder.switchDefault.setChecked(currentValue);
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView name;
+        private TextView name1;
         private Switch switchDefault;
         public MyViewHolder(View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.textView2);
+            name1=itemView.findViewById(R.id.textView2);
             switchDefault = itemView.findViewById(R.id.switch1);
 
 

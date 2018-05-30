@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
         if(currentScreen!=screen){
             recreate();
         }
+        boolean currentScreen1 = sharedPref.getBoolean("tuningPreference", true);
+        //if(currentScreen1)
     }
 
     @Override
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
                 context.getString(R.string.preference_file_key),Context.MODE_PRIVATE);
 
         screen = sharedPref.getBoolean(getString(R.string.background_style), true);
+        //screen1 =sharedPref.getBoolean("tuningPreference", true);
 //use maylis whetsels shared preferences tutorial
        if(!screen)
        {setContentView(R.layout.activity_main);}
@@ -211,7 +214,6 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 //        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
             startRecording();
 
         } else {
