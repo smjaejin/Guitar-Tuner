@@ -38,7 +38,7 @@ public class SettingsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         Intent i = getIntent();
         Settings backgroundMode = new Settings(false, "Light Mode/Dark Mode" );
-        Settings tuning = new Settings(false, "Advanced/Standard");
+        Settings tuning = new Settings(false, "Standard/Advanced");
         changeBackground = (Switch) findViewById(R.id.switch1);
         tuneActivity = (Switch) findViewById(R.id.switch1);
         toolTitle = (TextView) findViewById(R.id.textView2);

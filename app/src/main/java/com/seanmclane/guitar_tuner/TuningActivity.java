@@ -1,5 +1,6 @@
 package com.seanmclane.guitar_tuner;
 
+import android.content.Intent;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
@@ -44,7 +45,7 @@ public class TuningActivity extends AppCompatActivity {
 
         Log.d("LOOK AT ME", "addTunings: "+tunings.get(1).getName());
         Log.d("LOOK AT ME", "addTunings: "+tunings.size());
-
+    Intent intent = getIntent();
     }
 
     private void addTunings() {

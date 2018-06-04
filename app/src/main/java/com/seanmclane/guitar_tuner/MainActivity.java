@@ -36,19 +36,23 @@ public class MainActivity extends AppCompatActivity {
     public final static int REQUEST_AUDIO_ACCSESS=0;
     private SeekBar seekBar;
     private boolean screen;
-
+    private boolean screenAdvanced;
     @Override
     protected void onResume() {
         super.onResume();
         Context context = this;
         SharedPreferences sharedPref = context.getSharedPreferences(
                 context.getString(R.string.preference_file_key),Context.MODE_PRIVATE);
+       // boolean screen1 =sharedPref.getBoolean("tuningPreference", true);
         boolean currentScreen =  sharedPref.getBoolean(getString(R.string.background_style), true);
         if(currentScreen!=screen){
             recreate();
         }
-        boolean currentScreen1 = sharedPref.getBoolean("tuningPreference", true);
-        //if(currentScreen1)
+//       boolean advancedScreen = sharedPref.getBoolean(getString(R.string.tuning_preference), false);
+//        if(advancedScreen)
+//        if(screenAdvanced){
+//         recreate();
+//        }
     }
 
     @Override
@@ -59,12 +63,16 @@ public class MainActivity extends AppCompatActivity {
                 context.getString(R.string.preference_file_key),Context.MODE_PRIVATE);
 
         screen = sharedPref.getBoolean(getString(R.string.background_style), true);
-        //screen1 =sharedPref.getBoolean("tuningPreference", true);
 //use maylis whetsels shared preferences tutorial
        if(!screen)
        {setContentView(R.layout.activity_main);}
        else setContentView(R.layout.activity_main_dark);
 
+//        screenAdvanced = sharedPref.getBoolean("tuningPreference", false);
+//if(screenAdvanced)
+//{
+
+//}
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},REQUEST_AUDIO_ACCSESS);
         }
@@ -89,9 +97,18 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.credits:
                 openCredits();
+                break;
+            case R.id.advanced:
+                openAdvanced();
         }
+
         return true;
 
+    }
+
+    private void openAdvanced() {
+        Intent intent = new Intent(MainActivity.this, TuningActivity.class);
+        startActivity(intent);
     }
 
 

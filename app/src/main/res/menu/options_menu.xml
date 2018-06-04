@@ -6,4 +6,7 @@
     <item
         android:id="@+id/credits"
         android:title="Credits"/>
+    <item
+        android:id="@+id/advanced"
+        android:title="Advanced"/>
 </menu>
